@@ -17,7 +17,7 @@ Author: Martin Quinson
 
 --- a/quilt/scripts/patchfns.in
 +++ b/quilt/scripts/patchfns.in
-@@ -1019,6 +1019,23 @@
+@@ -1066,6 +1066,23 @@
  	fi
  }
  
@@ -54,7 +54,7 @@ Author: Martin Quinson
  	printf $"Patch %s exists already\n" "$(print_patch $patch)" >&2
 --- a/quilt/import.in
 +++ b/quilt/import.in
-@@ -186,6 +186,8 @@
+@@ -187,6 +187,8 @@
  		patch=${orig_patch_file##*/}
  	fi
  
@@ -65,7 +65,7 @@ Author: Martin Quinson
  
 --- a/quilt/fork.in
 +++ b/quilt/fork.in
-@@ -77,6 +77,8 @@
+@@ -74,6 +74,8 @@
  
  new_patch=${new_patch#$QUILT_PATCHES/}
  
@@ -76,7 +76,7 @@ Author: Martin Quinson
     [ -e "$(patch_file_name $new_patch)" ]
 --- a/quilt/rename.in
 +++ b/quilt/rename.in
-@@ -77,6 +77,8 @@
+@@ -74,6 +74,8 @@
  
  new_patch=${1#$QUILT_PATCHES/}
  

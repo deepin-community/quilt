@@ -6,17 +6,6 @@
 #
 #  See the COPYING and AUTHORS files for more details.
 
-# Read in library functions
-if [ "$(type -t patch_file_name)" != function ]
-then
-	if ! [ -r $QUILT_DIR/scripts/patchfns ]
-	then
-		echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
-		exit 1
-	fi
-	. $QUILT_DIR/scripts/patchfns
-fi
-
 usage()
 {
 	printf $"Usage: quilt refresh [-p n|-p ab] [-u|-U num|-c|-C num] [-z[new_name]] [-f] [--no-timestamps] [--no-index] [--diffstat] [--sort] [--backup] [--strip-trailing-whitespace] [patch]\n"
@@ -83,7 +72,7 @@ die()
 	local status=$1
 	[ -n "$tmp_patch" ] && rm -f $tmp_patch
 	[ -n "$tmp_result" ] && rm -f $tmp_result
-	[ -n "$workdir" ] && rm -rf $workdir
+	[ -n "$workdir" ] && rm -rf "$workdir"
 	exit $status
 }
 
@@ -149,6 +138,14 @@ then
 	usage
 fi
 
+# Read in library functions
+if ! [ -r $QUILT_DIR/scripts/patchfns ]
+then
+	echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
+	exit 1
+fi
+. $QUILT_DIR/scripts/patchfns
+
 QUILT_DIFF_OPTS="$QUILT_DIFF_OPTS $opt_format"
 
 patch=$(find_applied_patch "$1") || exit 1
@@ -208,7 +205,7 @@ esac
 trap "die 1" SIGTERM
 
 if [ -n "$opt_fork" ]; then
-	workdir=$(gen_tempfile -d $PWD/quilt)
+	workdir=$(gen_tempfile -d "$PWD/quilt")
 	apply_patch_temporarily "$workdir" "$old_patch" || exit 1
 fi
 

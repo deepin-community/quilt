@@ -6,16 +6,8 @@
 #
 #  See the COPYING and AUTHORS files for more details.
 
-# Read in library functions
-if [ "$(type -t patch_file_name)" != function ]
-then
-	if ! [ -r $QUILT_DIR/scripts/patchfns ]
-	then
-		echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
-		exit 1
-	fi
-	. $QUILT_DIR/scripts/patchfns
-fi
+# One of the few commands which does not need a series file
+skip_series_check=1
 
 usage()
 {
@@ -83,6 +75,14 @@ if [ $# -ne 1 ]
 then
 	usage
 fi
+
+# Read in library functions
+if ! [ -r $QUILT_DIR/scripts/patchfns ]
+then
+	echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
+	exit 1
+fi
+. $QUILT_DIR/scripts/patchfns
 
 if [ "$QUILT_PATCHES" = "$QUILT_PC" ]
 then

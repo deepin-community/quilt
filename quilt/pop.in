@@ -6,17 +6,6 @@
 #
 #  See the COPYING and AUTHORS files for more details.
 
-# Read in library functions
-if [ "$(type -t patch_file_name)" != function ]
-then
-	if ! [ -r $QUILT_DIR/scripts/patchfns ]
-	then
-		echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
-		exit 1
-	fi
-	. $QUILT_DIR/scripts/patchfns
-fi
-
 usage()
 {
 	printf $"Usage: quilt pop [-afRqv] [--refresh] [num|patch]\n"
@@ -127,6 +116,7 @@ check_for_pending_changes()
 	then
 		printf $"Patch %s does not remove cleanly (refresh it or enforce with -f)\n" \
 		       "$(print_patch "$patch")" >&2
+		printf $"Hint: \`quilt diff -z' will show the pending changes.\n" >&2
 		status=1
 	fi
 	rm -rf $workdir
@@ -210,6 +200,14 @@ if [ $# -gt 1 -o \( -n "$opt_all" -a $# -ne 0 \) ]
 then
 	usage
 fi
+
+# Read in library functions
+if ! [ -r $QUILT_DIR/scripts/patchfns ]
+then
+	echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
+	exit 1
+fi
+. $QUILT_DIR/scripts/patchfns
 
 if [ -n "$opt_force" -a -n "$opt_refresh" ]
 then

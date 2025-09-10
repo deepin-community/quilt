@@ -8,18 +8,16 @@ Description: Verbosly fail when trying to push a non existant patch
  We need to think again about it to see how to rework it to make it
  more acceptable.
 Bug-Debian: https://bugs.debian.org/358875
-Forwarded: sent 2012-12-19
+Forwarded: https://lists.nongnu.org/archive/html/quilt-dev/2012-12/msg00034.html
 
 ---
  quilt/push.in     |    7 +++++++
  test/missing.test |    4 ++++
  2 files changed, 11 insertions(+)
 
-Index: b/quilt/push.in
-===================================================================
 --- a/quilt/push.in
 +++ b/quilt/push.in
-@@ -192,6 +192,13 @@ add_patch()
+@@ -182,6 +182,13 @@
  		no_reject_files="-r $tmp"
  	fi
  
@@ -33,8 +31,6 @@ Index: b/quilt/push.in
  	apply_patch "$patch" "$patch_file"
  	status=$?
  	trap "" SIGINT
-Index: b/test/missing.test
-===================================================================
 --- a/test/missing.test
 +++ b/test/missing.test
 @@ -5,6 +5,10 @@

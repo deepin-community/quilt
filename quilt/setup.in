@@ -6,24 +6,9 @@
 #
 #  See the COPYING and AUTHORS files for more details.
 
-# Version check is irrelevant to this command.
+# Version and series checks are irrelevant to this command.
 skip_version_check=1
-
-# Read in library functions
-if [ "$(type -t patch_file_name)" != function ]
-then
-	if ! [ -r $QUILT_DIR/scripts/patchfns ]
-	then
-		echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
-		exit 1
-	fi
-	. $QUILT_DIR/scripts/patchfns
-	if [ -n "$SUBDIR" ]
-	then
-		cd $SUBDIR
-		unset SUBDIR
-	fi
-fi
+skip_series_check=1
 
 check_for_existing_directories()
 {
@@ -141,7 +126,7 @@ create_md5sums()
 				;;
 			# In fast mode, we are only interested in patches, so filter out
 			# archives
-			*.tar|*.tar.Z|*.tar.gz|*.tgz|*.tar.bz2|*.tar.xz|*.tar.lz|*.zip|*.7z)
+			*.tar|*.tar.Z|*.tar.gz|*.tgz|*.tar.bz2|*.tar.xz|*.tar.lz|*.tar.zst|*.zip|*.7z)
 				[ -n "$QUILT_SETUP_FAST" ] && continue
 				;;
 		esac
@@ -197,6 +182,12 @@ create_md5sums()
 				set -- $(lzip -cd "$file" | md5sum)
 				echo "$1 $basename"
 				;;
+			"Zstandard compressed data"*)
+				echo -n "z" >&4
+				echo "zstd -cd $file | md5sum" >&5
+				set -- $(zstd -cd "$file" | md5sum)
+				echo "$1 $basename"
+				;;
 		esac
 	done > $output
 	echo >&4
@@ -244,7 +235,7 @@ inspect()
 		ln -s "$targetdir" $tmpdir/build
 		export -f create_md5sums
 	else
-		# Standard mode
+		# Legacy mode
 		mkdir -p $tmpdir/build
 		create_md5sums "$sourcedir" $tmpdir/md5sums
 	fi
@@ -287,15 +278,27 @@ Initializes a source tree from an rpm spec file or a quilt series file.
 --fuzz=N
 	Set the maximum fuzz factor (needs rpm 4.6 or later).
 
---slow	Use the original, slow method to process the spec file. This is the
-	default for now, but that might change in the future. In this mode,
+--slow	Use the original, slow method to process the spec file. In this mode,
 	rpmbuild generates a working tree in a temporary directory while all
 	its actions are recorded, and then everything is replayed from scratch
 	in the target directory.
 
---fast	Use an alternative, faster method to process the spec file. In this
-	mode, rpmbuild is told to generate a working tree directly in the
-	target directory.
+--fast	Use the new, faster method to process the spec file. In this mode,
+	rpmbuild is told to generate a working tree directly in the target
+	directory. This is the default (since quilt version 0.67).
+
+The setup command is only guaranteed to work properly on spec files where
+applying all the patches is the last thing done in the %%prep section. This
+is a design limitation due to the fact that quilt can only operate on
+patches. If other commands in the %%prep section modify the patched files,
+they must come first, otherwise you won't be able to push the patch
+series.
+
+For example, a %%prep section where you first unpack a tarball, then
+apply patches, and lastly perform a tree-wide string substitution, is
+not OK. For \"quilt setup\" to work, it would have to be changed to
+unpacking the tarball, then performing the tree-wide string substitution,
+and lastly applying the patches.
 "
 		exit 0
 	else
@@ -312,6 +315,7 @@ fi
 
 eval set -- "$options"
 
+export QUILT_SETUP_FAST=1
 prefix=
 sourcedir=
 
@@ -337,7 +341,7 @@ do
 		QUILT_SETUP_FAST=
 		shift ;;
 	--fast)
-		export QUILT_SETUP_FAST=1
+		QUILT_SETUP_FAST=1
 		shift ;;
 	--)
 		shift
@@ -348,6 +352,25 @@ done
 if [ $# -ne 1 ]
 then
 	usage
+fi
+
+# Read in library functions
+if ! [ -r $QUILT_DIR/scripts/patchfns ]
+then
+	echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
+	exit 1
+fi
+. $QUILT_DIR/scripts/patchfns
+
+if [ -n "$SUBDIR" ]
+then
+	# Damn, found an enclosing quilt directory; don't follow its settings
+	cd $SUBDIR
+	unset SUBDIR
+	unset QUILT_PC QUILT_PATCHES QUILT_SERIES
+	: ${QUILT_PC:=.pc}
+	: ${QUILT_PATCHES:=patches}
+	: ${QUILT_SERIES:=series}
 fi
 
 tmpfile=$(gen_tempfile)

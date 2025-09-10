@@ -1,9 +1,21 @@
+# In order to build the PDF documentation, you need the following packages
+# to be installed:
+#
+# texlive-latex texlive-subfigure texlive-metafont texlive-mfware
+# texlive-cyrillic texlive-collection-langcyrillic texlive-cmap
+# texlive-cm-super
+#
+# Alternatively, installing hevea might be sufficient on some distributions.
+
 all : quilt.pdf quilt-rus.pdf
 
 quilt.ps : quilt.dvi
 	dvips -t letter -o $@ $<
 
-quilt.pdf: main.tex
+quilt.aux: main.tex
+	pdflatex --draftmode --jobname=quilt -t letter $<
+
+quilt.pdf: main.tex quilt.aux
 	pdflatex --jobname=quilt -t letter $<
 
 quilt.dvi : main.tex
@@ -13,7 +25,10 @@ quilt.dvi : main.tex
 quilt-rus.ps : quilt-rus.dvi
 	dvips -t letter -o $@ $<
 
-quilt-rus.pdf: main-rus.tex
+quilt-rus.aux: main-rus.tex
+	pdflatex --draftmode --jobname=quilt-rus -t letter $<
+
+quilt-rus.pdf: main-rus.tex quilt-rus.aux
 	pdflatex --jobname=quilt-rus -t letter $<
 
 quilt-rus.dvi : main-rus.tex

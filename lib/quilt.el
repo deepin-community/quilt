@@ -29,37 +29,49 @@
   "Return t if there is on the bottom of patch stack, return nil if otherwise."
   (if (> (call-process "quilt" nil nil nil "applied") 0) 1))
 
+(defun quilt--get-config-variable (var)
+  "Return the value of a configuration variable. Return nil if it is unset."
+  (or (with-current-buffer (generate-new-buffer " *cmd")
+        (shell-command
+         (concat "if [ -f ~/.quiltrc ]; then"
+                 "  . ~/.quiltrc ;"
+                 "elif [ -f /etc/quilt.quiltrc ]; then"
+                 "  . /etc/quilt.quiltrc ;"
+                 "fi ;"
+                 "echo -n $" var)
+         t)
+        (unwind-protect
+            (let ((v (buffer-string)))
+              (if (string= "" (buffer-string))
+                  nil
+                v))
+          (kill-buffer (current-buffer))))
+      (getenv var)))
+
+(defun quilt--per-project-patches-directory ()
+  (let ((qd (quilt-dir)))
+    (if qd
+        (let ((project-config (concat qd "/"
+                                      (quilt-pc-directory) "/.quilt_patches")))
+          (if (file-readable-p project-config)
+              (with-temp-buffer
+                (insert-file-contents-literally project-config)
+                (substring (buffer-string) 0 -1)))))))
+
 (defun quilt-patches-directory ()
   "Return the location of patch files."
-  (or (with-current-buffer (generate-new-buffer " *cmd")
-        (shell-command
-         (concat "test -f ~/.quiltrc && . ~/.quiltrc ;"
-                 "echo -n $QUILT_PATCHES")
-         t)
-        (unwind-protect
-            (let ((v (buffer-string)))
-              (if (string= "" (buffer-string))
-                  nil
-                v))
-          (kill-buffer (current-buffer))))
-      (or (getenv "QUILT_PATCHES")
-          "patches")))
+  (or (quilt--per-project-patches-directory)
+      (quilt--get-config-variable "QUILT_PATCHES")
+      "patches"))
 
 (defun quilt-pc-directory ()
-  "Return the location of patch files."
-  (or (with-current-buffer (generate-new-buffer " *cmd")
-        (shell-command
-         (concat "test -f ~/.quiltrc && . ~/.quiltrc ;"
-                 "echo -n $QUILT_PC")
-         t)
-        (unwind-protect
-            (let ((v (buffer-string)))
-              (if (string= "" (buffer-string))
-                  nil
-                v))
-          (kill-buffer (current-buffer))))
-      (or (getenv "QUILT_PC")
-          ".pc")))
+  "Return the location of the quilt working state directory."
+  (or (quilt--get-config-variable "QUILT_PC")
+      ".pc"))
+
+(defun quilt-patches-prefix ()
+  "Return the value of the QUILT_PATCHES_PREFIX config variable. Return nil if it is unset."
+  (quilt--get-config-variable "QUILT_PATCHES_PREFIX"))
 
 (defun quilt-find-dir (fn &optional prefn)
   "Return the top level dir of quilt from FN."
@@ -181,6 +193,11 @@
       (setq n (1+ n))))
   (completing-read p l nil t))
 
+(defun quilt--strip-patchname (pn)
+  "Return the name of patch PN sans the path to the patches directory."
+  (let ((patches-path (concat (quilt-patches-directory) "/")))
+    (substring pn (length patches-path))))
+
 (defvar quilt-edit-top-only 't)
 (defun quilt-editable (f)
   "Return t if F is editable in terms of current patch.  Return nil if otherwise."
@@ -191,7 +208,10 @@
 	(if (quilt-bottom-p)
 	    (quilt-cmd "applied")	; to print error message
 	  (setq dirs (if quilt-edit-top-only
-			 (list (substring (quilt-cmd-to-string "top")  0 -1))
+			 (list (let ((patch (substring (quilt-cmd-to-string "top")  0 -1)))
+				 (if (quilt-patches-prefix)
+				     (quilt--strip-patchname patch)
+				   patch)))
 			 (cdr (cdr (directory-files (concat qd (quilt-pc-directory) "/"))))))
 	  (while (and (not result) dirs)
 	    (if (file-exists-p (concat qd (quilt-pc-directory) "/" (car dirs) "/" fn))
@@ -220,7 +240,7 @@
   (force-mode-line-update))
 
 (defun quilt-revert (filelist)
-  "Refresh contents, editability and modeline of FILESIT.
+  "Refresh contents, editability and modeline of FILELIST.
 FILELIST won't be touched unless their file is a child of the
 current quilt directory.  Each elements in FILELIST should be the absolute
 file names of those files affected by the latest quilt

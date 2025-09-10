@@ -1,17 +1,15 @@
-quilt-init
-dep3mail            ### Sent 2014-01-18
-check_SERIES_exists ### Sent 2014-01-18
-setup-dont-read-pc  ### Sent 2014-01-18
+quilt-init.patch
+dep3mail.patch            ### Sent 2014-01-18
+check_SERIES_exists.patch ### Sent 2014-01-18
 
-restrict-patch-names
-fail_on_missing
+restrict-patch-names.patch
+fail_on_missing.patch
 # Works only with patch 2.6 and newer currently and we don't want to break
 # backports (see #560621 for discussion)
-# test_broken_patches
-shell-subcommand
-use-sensible-editor
-dep3_headers
-push_timeskew
+# test_broken_patches.patch
+shell-subcommand.patch
+use-sensible-editor.patch
+dep3_headers.patch
+push_timeskew.patch
 manpage-typo.patch
-fix-failing-tests
-fix-faildiff-test.patch
+fix-failing-tests.patch

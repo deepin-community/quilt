@@ -1,11 +1,19 @@
 Source: quilt
 Maintainer: Martin Quinson <mquinson@debian.org>
-Uploaders: Dr. Tobias Quathamer <toddy@debian.org>
+Uploaders: Dr. Tobias Quathamer <toddy@debian.org>,
 Section: vcs
 Priority: optional
-Build-Depends: bash-completion, debhelper-compat (= 12)
-Build-Depends-Indep: diffstat, ed, gettext, hevea, html2text, perl, procmail
-Standards-Version: 4.5.0
+Build-Depends: bash-completion,
+               debhelper-compat (= 13),
+Build-Depends-Indep: diffstat,
+                     ed,
+                     gawk,
+                     gettext,
+                     hevea,
+                     html2text,
+                     perl,
+                     procmail,
+Standards-Version: 4.7.0
 Vcs-Browser: https://salsa.debian.org/debian/quilt
 Vcs-Git: https://salsa.debian.org/debian/quilt.git
 Homepage: https://savannah.nongnu.org/projects/quilt
@@ -21,11 +29,13 @@ Depends: bsdextrautils | bsdmainutils,
          patch,
          sensible-utils,
          ${misc:Depends},
-         ${perl:Depends}
-Recommends: less
-Suggests: default-mta | mail-transport-agent, graphviz, procmail
-Enhances: cdbs, debhelper
-Breaks: debhelper (<< 9.20160114~bpo)
+         ${perl:Depends},
+Recommends: less,
+Suggests: default-mta | mail-transport-agent,
+          graphviz,
+          procmail,
+Enhances: cdbs,
+          debhelper,
 Description: Tool to work with series of patches
  Quilt manages a series of patches by keeping track of the changes
  each of them makes. They are logically organized as a stack, and you can
@@ -47,7 +57,9 @@ Description: Tool to work with series of patches
 
 Package: quilt-el
 Architecture: all
-Depends: emacs | emacsen, quilt, ${misc:Depends}
+Depends: emacs | emacsen,
+         quilt,
+         ${misc:Depends},
 Description: simple Emacs interface of quilt
  This is an Emacs minor mode for quilt. By using this,
  it becomes easy to edit files controlled by quilt.
