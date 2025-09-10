@@ -25,7 +25,7 @@ too. --Raphael Hertzog
 
 --- a/quilt/header.in
 +++ b/quilt/header.in
-@@ -21,7 +21,7 @@
+@@ -10,7 +10,7 @@
  
  usage()
  {
@@ -34,7 +34,7 @@ too. --Raphael Hertzog
  
  	if [ x$1 = x-h ]
  	then
-@@ -41,6 +41,10 @@
+@@ -30,6 +30,10 @@
  
  --backup
  	Create a backup copy of the old version of a patch as patch~.
@@ -45,7 +45,7 @@ too. --Raphael Hertzog
  " "$EDITOR"
  		exit 0
  	else
-@@ -68,7 +72,7 @@
+@@ -57,7 +61,7 @@
  	fi
  }
  
@@ -54,7 +54,7 @@ too. --Raphael Hertzog
  
  if [ $? -ne 0 ]
  then
-@@ -92,6 +96,9 @@
+@@ -81,6 +85,9 @@
  	--backup)
  		QUILT_BACKUP=1
  		shift ;;
@@ -64,7 +64,7 @@ too. --Raphael Hertzog
  	--strip-diffstat)
  		opt_strip_diffstat=1
  		shift ;;
-@@ -149,6 +156,25 @@
+@@ -146,6 +153,25 @@
  		fi
  	) > $tmp
  

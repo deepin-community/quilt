@@ -6,17 +6,6 @@
 #
 #  See the COPYING and AUTHORS files for more details.
 
-# Read in library functions
-if [ "$(type -t patch_file_name)" != function ]
-then
-	if ! [ -r $QUILT_DIR/scripts/patchfns ]
-	then
-		echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
-		exit 1
-	fi
-	. $QUILT_DIR/scripts/patchfns
-fi
-
 declare -a opt_files=()
 
 usage()
@@ -71,7 +60,7 @@ scan_unapplied()
 	# Quote each file name only once
 	for file in "${opt_files[@]}"
 	do
-		files_bre[${#files_bre[@]}]=$(quote_bre "$file")
+		files_bre[${#files_bre[@]}]=$(quote_grep_re "$file")
 	done
 
 	# "Or" all files in a single pattern
@@ -127,6 +116,15 @@ if [ $# -lt 1 ]
 then
 	usage
 fi
+
+# Read in library functions
+if ! [ -r $QUILT_DIR/scripts/patchfns ]
+then
+	echo "Cannot read library $QUILT_DIR/scripts/patchfns" >&2
+	exit 1
+fi
+. $QUILT_DIR/scripts/patchfns
+
 while [ $# -ge 1 ]
 do
 	opt_files[${#opt_files[@]}]="$SUBDIR$1"

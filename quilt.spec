@@ -6,7 +6,7 @@ Name:		quilt
 Summary:	Scripts for working with series of patches
 License:	GPL
 Group:		Productivity/Text/Utilities
-Version:	0.66
+Version:	0.68
 Release:	1
 Requires:	coreutils diffutils findutils patch gzip bzip2 perl mktemp gettext
 Autoreqprov:	off
@@ -59,6 +59,38 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_docdir}/%{name}-%{version}/quilt.pdf
 
 %changelog
+* Wed Mar 27 2024 - upstream
+- Update to version 0.68
+  + Add support for zstd archives
+  + Documentation: Massive formatting update of the manual page
+  + Documentation: Reword some sections of the manual page
+  + Fix compatibility with BSD awk
+  + Fix compatibility with GNU awk version 5.0.0 and later
+  + Fix compatibility with GNU grep version 3.8 and later
+  + Fix compatibility with Solaris ln (#63451)
+  + Installation: Fix multiple issues in install-sh (#64430)
+  + Test suite: Fix various race conditions (#63651)
+  + patches: Find file name with a space in unapplied patches (#41708)
+  + pop: Hint at diff -z on failure
+  + setup: Document the limitation of spec file support
+
+* Tue Feb 15 2022 - upstream
+- Update to version 0.67
+  + Call pager with original LANG environment variable
+  + Consistently complain early if no series file is found
+  + Fix handling of symbolic links by several commands
+  + Tighten the patch format parsing
+  + Reuse the shell (performance)
+  + Document the series file format further
+  + Document that quilt loads /etc/quilt.quiltrc
+  + configure: Make stat configurable
+  + series: Minor optimizations
+  + setup: Don't obey the settings of any englobing .pc
+  + setup: Default to fast mode
+  + quilt.el: Fix documentation of quilt-pc-directory
+  + quilt.el: Load /etc/quilt.quiltrc if ~/.quiltrc doesn't exist
+  + quilt.el: Fix quilt-editable when QUILT_PATCHES_PREFIX is set
+
 * Thu Mar 28 2019 - upstream
 - Update to version 0.66
   + Add support for lzip archives and patches (#54570)

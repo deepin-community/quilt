@@ -13,11 +13,9 @@ Upstream-status: to be submitted
  test/push_timeskew.test       |   86 ++++++++++++++++++++++++++++++++++++++++++
  3 files changed, 105 insertions(+), 6 deletions(-)
 
-Index: b/quilt/push.in
-===================================================================
 --- a/quilt/push.in
 +++ b/quilt/push.in
-@@ -30,7 +30,8 @@ in the series file is applied.  When a n
+@@ -17,7 +17,8 @@
  specified number of patches.  When a patch name is specified, apply
  all patches up to and including the specified patch.  Patch names may
  include the patches/ prefix, which means that filename completion can
@@ -27,7 +25,7 @@ Index: b/quilt/push.in
  
  -a	Apply all patches in the series file.
  
-@@ -215,18 +216,29 @@ add_patch()
+@@ -205,18 +206,29 @@
  			touch "$QUILT_PC/$patch~refresh"
  		fi
  
@@ -61,11 +59,9 @@ Index: b/quilt/push.in
  		then
  			printf $"Patch %s appears to be empty; applied\n" \
  			       "$(print_patch "$patch")"
-Index: b/quilt/scripts/backup-files.in
-===================================================================
 --- a/quilt/scripts/backup-files.in
 +++ b/quilt/scripts/backup-files.in
-@@ -184,8 +184,9 @@ restore_all()
+@@ -190,8 +190,9 @@
  			done < "$NONEMPTY_FILES"
  		fi
  
@@ -76,8 +72,6 @@ Index: b/quilt/scripts/backup-files.in
  		fi
  	fi
  
-Index: b/test/push_timeskew.test
-===================================================================
 --- /dev/null
 +++ b/test/push_timeskew.test
 @@ -0,0 +1,86 @@

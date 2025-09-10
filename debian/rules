@@ -26,7 +26,7 @@ ifeq (,$(findstring stage1,$(DEB_BUILD_PROFILES)))
 	cd doc/tmp; LC_ALL=C hevea ../main.tex ; LC_ALL=C hevea ../main.tex; LC_ALL=C hevea ../main.tex
 	perl -pe 'if (/\\sh\{.*}/) {s:\\sh\{(.*)}:<I>$$1</I>:}'	\
 	     < doc/tmp/main.html > doc/quilt.html
-	LC_ALL=C html2text -style pretty -o doc/quilt.txt doc/quilt.html
+	LC_ALL=C html2text -rcfile /usr/share/doc/html2text/examples/pretty.style -o doc/quilt.txt doc/quilt.html
 else
 	touch doc/quilt.html doc/quilt.txt
 endif

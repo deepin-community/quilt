@@ -4,7 +4,7 @@ Description: Implement a new "quilt shell" command
  topmost patch.
 Author: Josselin Mouette <joss@debian.org>
 Bug-Debian: https://bugs.debian.org/526141
-Forwarded: submitted 2012-12-19
+Forwarded: https://lists.nongnu.org/archive/html/quilt-dev/2012-12/msg00039.html
 
 ---
  bash_completion |    2 -

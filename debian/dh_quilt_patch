@@ -21,6 +21,9 @@ All patches listed in B<debian/patches/series> are then applied in the
 current directory. The command does not fail if the patches have
 already been applied.
 
+If the file B<debian/patches/series> does not exist or is empty,
+dh_quilt_patch returns without doing anything.
+
 You can use another directory instead of B<debian/patches> by setting
 (and exporting) the environment variable B<QUILT_PATCH_DIR>.
 
@@ -46,7 +49,15 @@ init();
 
 $ENV{"QUILT_PATCHES"} = $ENV{"QUILT_PATCH_DIR"} ?
                         $ENV{"QUILT_PATCH_DIR"} : "debian/patches";
-complex_doit('quilt --quiltrc /dev/null push -a || test $? = 2');
+
+# Since v0.67, quilt returns the error code 1 instead of 2,
+# if the series file does not exist or is empty.
+# So check if the series file contains data before
+# running quilt to avoid returning an error.
+# See Debian bug reports #1030781, #1053444, #1053500 for details.
+if ( -s $ENV{"QUILT_PATCHES"} . "/series" ) {
+    complex_doit('quilt --quiltrc /dev/null push -a || test $? = 2');
+}
 
 =head1 NOTES
 

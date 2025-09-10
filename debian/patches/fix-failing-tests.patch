@@ -1,22 +1,14 @@
 Description: Fix failing tests with Debian version of quilt
+Author: Dr. Tobias Quathamer <toddy@debian.org>
+Forwarded: not-needed
+
  Due to the patch "fail_on_missing", Debian's quilt will not
  return the expected output if a patch is empty. Therefore,
  we need to pass "-f" to make it apply the patch anyway.
-Author: Dr. Tobias Quathamer <toddy@debian.org>
-Forwarded: not-needed
----
-This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
----
- test/altered-series.test |    2 +-
- test/missing.test        |    8 ++++----
- test/three.test          |    2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Index: b/test/altered-series.test
-===================================================================
 --- a/test/altered-series.test
 +++ b/test/altered-series.test
-@@ -6,7 +6,7 @@ $ cat > patches/series
+@@ -6,7 +6,7 @@
  < 02.patch
  < 03.patch
  
@@ -25,11 +17,9 @@ Index: b/test/altered-series.test
  > Applying patch %{P}01.patch
  > Patch %{P}01.patch does not exist; applied empty patch
  > Applying patch %{P}02.patch
-Index: b/test/three.test
-===================================================================
 --- a/test/three.test
 +++ b/test/three.test
-@@ -202,7 +202,7 @@
+@@ -170,7 +170,7 @@
  	> Removing patch %{P}patch1.diff
  	> No patches applied
  
@@ -38,8 +28,6 @@ Index: b/test/three.test
  	> Applying patch %{P}patch1.diff
  	> Applying patch %{P}patch2.diff
  	> Applying patch %{P}patch3.diff
-Index: b/test/missing.test
-===================================================================
 --- a/test/missing.test
 +++ b/test/missing.test
 @@ -5,10 +5,10 @@

@@ -20,13 +20,13 @@ Author: Ryan Niebur <ryanryan52@gmail.com>
 -: ${EDITOR:=vi}
 +: ${EDITOR:=sensible-editor}
  
- # Read in library functions
- if [ "$(type -t patch_file_name)" != function ]
+ usage()
+ {
 --- a/quilt/header.in
 +++ b/quilt/header.in
-@@ -17,7 +17,7 @@
- 	. $QUILT_DIR/scripts/patchfns
- fi
+@@ -6,7 +6,7 @@
+ #
+ #  See the COPYING and AUTHORS files for more details.
  
 -: ${EDITOR:=vi}
 +: ${EDITOR:=sensible-editor}
@@ -42,8 +42,8 @@ Author: Ryan Niebur <ryanryan52@gmail.com>
 -: ${EDITOR:=vi}
 +: ${EDITOR:=sensible-editor}
  
- # Read in library functions
- if [ "$(type -t patch_file_name)" != function ]
+ usage()
+ {
 --- a/test/edit.test
 +++ b/test/edit.test
 @@ -7,6 +7,7 @@
